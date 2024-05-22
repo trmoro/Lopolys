@@ -18,6 +18,7 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@threejs-addons/threejs-addons": "^0.3.0",
     "rxjs": "~7.8.0",
     "three": "^0.164.1",
     "three-addons": "^1.2.0",

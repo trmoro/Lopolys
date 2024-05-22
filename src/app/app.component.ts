@@ -2,7 +2,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import * as THREE from 'three';
-//import { TrackballControls } from 'three-addons';
+import { TrackballControls  } from 'three/examples/jsm/controls/TrackballControls.js';
 
 @Component({
   selector: 'app-root',
@@ -39,20 +39,22 @@ export class AppComponent implements AfterViewInit{
     renderer.setAnimationLoop( animation );
     document.body.appendChild( renderer.domElement );
 
-    /*
     const controls = new TrackballControls( camera, renderer.domElement );
     controls.rotateSpeed = 1.0;
     controls.zoomSpeed = 1.2;
     controls.panSpeed = 0.8;
     controls.keys = [ 'KeyA', 'KeyS', 'KeyD' ];
-    */
 
     // animation
 
     function animation( time: number ) {
 
-      mesh.rotation.x = time / 2000;
-      mesh.rotation.y = time / 1000;
+      requestAnimationFrame( animation );
+
+      mesh.rotation.x = time / 5000;
+      mesh.rotation.y = time / 4000;
+
+      controls.update();
 
       renderer.render( scene, camera );
 
