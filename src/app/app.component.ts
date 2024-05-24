@@ -66,14 +66,14 @@ export class AppComponent implements AfterViewInit{
     camera.position.x = 2000;
     controls.update();
 
-    const geometry = new THREE.PlaneGeometry( 12800, 12800, worldWidth - 1, worldDepth - 1 );
+    const geometry = new THREE.PlaneGeometry( 3200, 3200, worldWidth - 1, worldDepth - 1 );
     geometry.rotateX( - Math.PI / 2 );
 
     const vertices = geometry.attributes['position'].array;
 
     for ( let i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
 
-      vertices[ j + 1 ] = data[ i ] * 5;
+      vertices[ j + 1 ] = data[ i ] * 3;
 
     }
 
@@ -92,6 +92,13 @@ export class AppComponent implements AfterViewInit{
     let helper = new THREE.Mesh( geometryHelper, new THREE.MeshNormalMaterial() );
     scene.add( helper );
 
+    //Water plane
+    const wGeometry = new THREE.PlaneGeometry( 3200, 3200, worldWidth - 1, worldDepth - 1 );
+    wGeometry.rotateX( - Math.PI / 2 );
+    let wMesh = new THREE.Mesh( wGeometry, new THREE.MeshBasicMaterial( { color: '#0000ff' } ) );
+    wMesh.position.y = 30;
+    scene.add( wMesh );
+
     window.addEventListener( 'pointermove', onPointerMove );
 
     //
@@ -109,24 +116,22 @@ export class AppComponent implements AfterViewInit{
 
     }
 
-    function generateHeight( width: number, height: number ) {
+    function generateHeight( width: number, height: number ) : Uint8Array {
 
-      const size = width * height, data = new Uint8Array( size ),
-        perlin = new ImprovedNoise(), z = Math.random() * 100;
+      const data = new Uint8Array( width * height );
+      const perlin = new ImprovedNoise();
+      const z = Math.random() * 100;
 
-      let quality = 1;
+      let quality = 2;
 
-      for ( let j = 0; j < 4; j ++ ) {
-
-        for ( let i = 0; i < size; i ++ ) {
-
-          const x = i % width, y = ~ ~ ( i / width );
-          data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
-
+      for(let q = 0; q < 4; q++) {
+        for ( let x = 0; x < width; x ++ ) {
+          for ( let y = 0; y < height; y ++ ) {
+            const h = Math.abs( perlin.noise( x / quality, y / quality, z ) * quality );
+            data[ (x*height) + y ] += h;
+          }
         }
-
-        quality *= 5;
-
+        quality *= 4;  
       }
 
       return data;
@@ -149,7 +154,7 @@ export class AppComponent implements AfterViewInit{
       canvas.height = height;
 
       context = canvas.getContext( '2d' );
-      context!.fillStyle = '#000';
+      context!.fillStyle = '#000000';
       context!.fillRect( 0, 0, width, height );
 
       image = context!.getImageData( 0, 0, canvas.width, canvas.height );
@@ -164,9 +169,9 @@ export class AppComponent implements AfterViewInit{
 
         shade = vector3.dot( sun );
 
-        imageData[ i ] = ( 96 + shade * 128 ) * ( 0.5 + data[ j ] * 0.007 );
-        imageData[ i + 1 ] = ( 32 + shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
-        imageData[ i + 2 ] = ( shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
+        imageData[ i + 1] = ( 96 + shade * 128 ) * ( 0.5 + data[ j ] * 0.007 );
+        imageData[ i ] = ( 32 + shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
+        imageData[ i + 2] = ( shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
 
       }
 
