@@ -2,7 +2,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import * as THREE from 'three';
-import { TrackballControls  } from 'three/examples/jsm/controls/TrackballControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ImprovedNoise  } from 'three/examples/jsm/math/ImprovedNoise';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
@@ -46,11 +46,10 @@ export class AppComponent implements AfterViewInit{
     camera.position.z = 1;
 
     //Camera control
-    const controls = new TrackballControls( camera, renderer.domElement );
-    controls.rotateSpeed = 1.0;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.keys = [ 'KeyA', 'KeyS', 'KeyD' ];
+    const controls = new OrbitControls( camera, renderer.domElement );
+    controls.minDistance = 1000;
+    controls.maxDistance = 10000;
+    controls.maxPolarAngle = Math.PI / 2;
 
     //On window resize
     function onWindowResize() {
